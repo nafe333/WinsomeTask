@@ -22,11 +22,12 @@ struct ProductResponse: Codable {
 }
 
 // MARK: - Product
-struct Product: Codable {
+struct Product: Codable, Identifiable {
     let id: Int?
     let title: String?
     let description: String?
-    let category: Category?
+  //  let category: Category?
+    let category: String?
     let price: Double?
     let rating: Double?
     let stock: Int?

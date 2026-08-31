@@ -19,7 +19,7 @@ class ProductService: ProductServiceProtocol {
     }
     
     func getProducts() async throws -> ProductResponse {
-        try await networkManager.fetch(Constants.shared.baseURL)
+        try await networkManager.fetch(.products)
     }
     
 }

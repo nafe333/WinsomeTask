@@ -12,18 +12,36 @@ struct SingleProduct: View {
     let title: String
     let rating: Double
     let price: Double
-    let imageName: String
+    let imageURL: String
     @State private var isFavorited: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
             ZStack(alignment: .topTrailing) {
-                            Image(imageName)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: 160)
-                                .clipped()
+                
+                
+                AsyncImage(url: URL(string: imageURL)) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 160)
+                                            .background(Color.gray.opacity(0.1))
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .foregroundStyle(.gray)
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 160)
+                                            .background(Color.gray.opacity(0.1))
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
 
                             Button {
                                 isFavorited.toggle()
@@ -69,7 +87,7 @@ struct SingleProduct: View {
         title: "Memory Foam Neck Pillow",
         rating: 4.7,
         price: 34.99,
-        imageName: "placeholder"
+        imageURL: "placeholder"
     )
     .frame(width: 180)
 }

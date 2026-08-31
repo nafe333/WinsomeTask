@@ -8,7 +8,7 @@
 import Foundation
 
 protocol NetworkManaging {
-    func fetch<T: Decodable>(_ endpoint: String?) async throws -> T
+    func fetch<T: Decodable>(_ endpoint: Endpoint) async throws -> T
 }
 
 class NetworkingManager: NetworkManaging {
@@ -18,10 +18,10 @@ class NetworkingManager: NetworkManaging {
         self.session = session
     }
     
-    func fetch<T>(_ endpoint: String?) async throws -> T where T : Decodable {
-        guard let url = URL(string: endpoint ?? "") else {
-            throw NetworkError.invalidURL
-        }
+    func fetch<T>(_ endpoint: Endpoint) async throws -> T where T : Decodable {
+        guard let url = endpoint.url else {
+                    throw NetworkError.invalidURL
+                }
         
         let (data, response) = try await session.data(from: url)
         

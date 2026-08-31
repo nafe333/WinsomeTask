@@ -25,7 +25,7 @@ final class ProductsViewModel: ObservableObject {
         errorMessage = nil
         do {
             let response = try await service.getProducts()
-            products = response.products
+            products = response.products ?? []
         } catch {
             errorMessage = "Failed to load products. Please try again."
         }

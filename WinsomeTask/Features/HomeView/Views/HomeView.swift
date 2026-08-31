@@ -8,18 +8,51 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @StateObject private var viewModel = ProductsViewModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-            
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if let error = viewModel.errorMessage {
+                Text(error)
+            } else {
+                VStack(alignment: .leading) {
+                  Text("TripStore")
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                    
+             productsSection
+            }
+                    .padding()
+                }
+            }
+
+                .task{
+                    await viewModel.loadProducts()
+                }
         }
-        .padding()
     }
-}
+
 
 #Preview {
     HomeView()
+}
+extension HomeView {
+    private var productsSection: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                ForEach(viewModel.products) { product in
+                    SingleProduct(
+                        category: product.category ?? "General",
+                        title: product.title ?? "Untitled",
+                        rating: product.rating ?? 0,
+                        price: product.price ?? 0,
+                        imageURL: product.thumbnail ?? ""
+                    )
+                }
+            }
+        }
+    }
 }
