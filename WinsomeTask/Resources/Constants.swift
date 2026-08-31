@@ -6,9 +6,6 @@
 //
 
 import Foundation
-final class Constants {
-    static let shared = Constants()
-    private init() {}
-    
-    let baseURL = "https://dummyjson.com/products"
+enum Constants {
+    static let baseURL = "https://dummyjson.com"
 }
