@@ -66,7 +66,7 @@ struct SingleProduct: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
                     .lineLimit(2)
-                 //   .fixedSize(horizontal: false, vertical: true)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 RatingView(rating: rating)
 

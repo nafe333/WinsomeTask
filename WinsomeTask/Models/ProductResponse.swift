@@ -26,7 +26,6 @@ struct Product: Codable, Identifiable {
     let id: Int?
     let title: String?
     let description: String?
-  //  let category: Category?
     let category: String?
     let price: Double?
     let rating: Double?
@@ -53,11 +52,4 @@ struct Product: Codable, Identifiable {
     }
 }
 
-
-enum Category: String, Codable {
-    case beauty = "beauty"
-    case fragrances = "fragrances"
-    case furniture = "furniture"
-    case groceries = "groceries"
-}
 

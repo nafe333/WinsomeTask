@@ -8,8 +8,9 @@
 import Foundation
 
 protocol ProductServiceProtocol {
-    func getProducts() async throws -> ProductResponse
+    func getProducts(params: ProductQueryParams) async throws -> ProductResponse
 }
+
 
 class ProductService: ProductServiceProtocol {
     private let networkManager: NetworkManaging
@@ -18,8 +19,8 @@ class ProductService: ProductServiceProtocol {
         self.networkManager = networkManager
     }
     
-    func getProducts() async throws -> ProductResponse {
-        try await networkManager.fetch(.products)
+    func getProducts(params: ProductQueryParams) async throws -> ProductResponse {
+        try await networkManager.fetch(.products(params))
     }
     
 }
