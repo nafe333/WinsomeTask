@@ -22,7 +22,8 @@ struct ProductDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                heroImage
+             //   heroImage
+                imageGallery
                 infoCard
                 aboutCard
                 quantityCard
@@ -54,12 +55,42 @@ struct ProductDetailsView: View {
 }
 
 extension ProductDetailsView {
-    private var heroImage: some View {
-           CachedAsyncImage(productId: product.id ?? 0, url: URL(string: product.thumbnail ?? ""))
-               .aspectRatio(contentMode: .fill)
-               .frame(height: 260)
-               .clipped()
-       }
+//    private var heroImage: some View {
+//           CachedAsyncImage(productId: product.id ?? 0, url: URL(string: product.thumbnail ?? ""))
+//               .aspectRatio(contentMode: .fill)
+//               .frame(height: 260)
+//               .clipped()
+//       }
+    
+    private var imageGallery: some View {
+        Group {
+            if let images = product.images, !images.isEmpty {
+                TabView {
+                    ForEach(Array(images.enumerated()), id: \.offset) { _, imageURL in
+                        CachedAsyncImage(
+                            productId: product.id ?? 0,
+                            url: URL(string: imageURL)
+                        )
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 260)
+                        .clipped()
+                    }
+                }
+                .tabViewStyle(.page)
+                .frame(height: 260)
+            } else {
+                CachedAsyncImage(
+                    productId: product.id ?? 0,
+                    url: URL(string: product.thumbnail ?? "")
+                )
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .frame(height: 260)
+                .clipped()
+            }
+        }
+    }
 
     private var infoCard: some View {
         VStack(alignment: .leading, spacing: 8) {
