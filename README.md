@@ -1,3 +1,9 @@
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 32 38 AM" src="https://github.com/user-attachments/assets/f17623ac-e90b-4873-9c2f-34135ef79f4d" />
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 32 56 AM" src="https://github.com/user-attachments/assets/66abc3c9-069c-4215-8947-6259b3050866" />
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 04 AM" src="https://github.com/user-attachments/assets/23e5b3d3-8fc0-4b4b-8324-b9609847dc51" />
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 13 AM" src="https://github.com/user-attachments/assets/bc340eb9-2aca-47ce-9dd8-6644d199a595" />
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 21 AM" src="https://github.com/user-attachments/assets/2f838eea-1800-4dca-96ff-2588a4f0d9e4" />
+<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 40 AM" src="https://github.com/user-attachments/assets/ddb703fa-1a97-4760-a108-ac369eb272c7" />
 # Winsome Task -- TripStore 🛍️
 This is a SwiftUI iOS shopping app built using the MVVM architecture. It pulls product data from the DummyJSON API and lets users browse, search, filter, sort, favourite items, and place a simple order — with offline support and local caching.
 
