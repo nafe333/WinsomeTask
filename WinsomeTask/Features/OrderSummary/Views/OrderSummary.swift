@@ -10,6 +10,7 @@ import SwiftData
 
 struct OrderSummary: View {
     @StateObject private var viewModel: OrderSummaryViewModel
+    @EnvironmentObject private var ordersViewModel: OrdersViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
@@ -117,19 +118,27 @@ extension OrderSummary {
            }
        }
 
-           private var confirmButton: some View {
-               Button {
-                   viewModel.confirmOrder()
-               } label: {
-                   Text("Confirm Order")
-                       .font(.headline)
-                       .foregroundStyle(.white)
-                       .frame(maxWidth: .infinity)
-                       .padding()
-                       .background(Color(red: 0.1, green: 0.15, blue: 0.3), in: RoundedRectangle(cornerRadius: 14))
-               }
-               .padding(.horizontal)
-           }
+    private var confirmButton: some View {
+        Button {
+            viewModel.confirmOrder(ordersViewModel: ordersViewModel)
+        } label: {
+            Text(viewModel.isSubmitting ? "Placing Order..." : "Confirm Order")
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    Color(
+                        red: 0.1,
+                        green: 0.15,
+                        blue: 0.3
+                    ),
+                    in: RoundedRectangle(cornerRadius: 14)
+                )
+        }
+        .disabled(viewModel.isSubmitting)
+        .padding(.horizontal)
+    }
        
 
        private var termsNotice: some View {

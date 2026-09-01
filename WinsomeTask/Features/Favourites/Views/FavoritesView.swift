@@ -6,23 +6,30 @@
 //
 
 import SwiftUI
+import Combine
 
 struct FavouritesView: View {
     @EnvironmentObject private var favoritesManager: FavoritesManager
+    @StateObject private var viewModel: FavouritesViewModel
 
-        var body: some View {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 12) {
-                    if favoritesManager.favoriteProducts.isEmpty {
-                        emptyState
-                    } else {
-                        Text("\(favoritesManager.favoriteProducts.count) saved")
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal)
+    init(viewModel: FavouritesViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
-                        ScrollView {
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                                ForEach(favoritesManager.favoriteProducts) { product in
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 12) {
+                if viewModel.favoriteProducts.isEmpty {
+                    emptyState
+                } else {
+                    Text("\(viewModel.favoriteProducts.count) saved")
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal)
+
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                            ForEach(viewModel.favoriteProducts) { product in
+                                NavigationLink(value: product) {
                                     SingleProduct(
                                         productId: product.id ?? 0,
                                         category: product.category ?? "General",
@@ -31,19 +38,24 @@ struct FavouritesView: View {
                                         price: product.price ?? 0,
                                         imageURL: product.thumbnail ?? "",
                                         isFavorited: true,
-                                        onToggleFavorite: { favoritesManager.toggle(product) }
+                                        onToggleFavorite: { viewModel.toggleFavorite(product) }
                                     )
                                 }
+                                .buttonStyle(.plain)
                             }
-                            .padding(.horizontal)
-                            .padding(.vertical, 4)
-                            .animation(.easeInOut(duration: 0.25), value: favoritesManager.favoriteProducts.count)
                         }
+                        .padding(.horizontal)
+                        .padding(.vertical, 4)
+                        .animation(.easeInOut(duration: 0.25), value: viewModel.favoriteProducts.count)
                     }
                 }
-                .navigationTitle("Favorites")
+            }
+            .navigationTitle("Favorites")
+            .navigationDestination(for: Product.self) { product in
+                ProductDetailsView(product: product)
             }
         }
+    }
 
         private var emptyState: some View {
             VStack(spacing: 12) {
@@ -65,5 +77,5 @@ struct FavouritesView: View {
 }
 
 #Preview {
-    FavouritesView()
+    FavouritesView(viewModel: FavouritesViewModel(favoritesManager: FavoritesManager()))
 }

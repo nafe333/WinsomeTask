@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 protocol OrderServiceProtocol {
-    func save(_ order: Order) async
+    func save(_ order: Order) async throws
     func loadAll() async -> [Order]
 }
 
@@ -21,13 +21,17 @@ final class OrderService: OrderServiceProtocol {
         self.modelContext = modelContext
     }
 
-    func save(_ order: Order) async {
+    func save(_ order: Order) async throws {
            modelContext.insert(order)
-           try? modelContext.save()
+           try modelContext.save()
        }
 
-       func loadAll() async -> [Order] {
-           let descriptor = FetchDescriptor<Order>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-           return (try? modelContext.fetch(descriptor)) ?? []
-       }
+    func loadAll() async -> [Order] {
+            let descriptor = FetchDescriptor<Order>(
+                sortBy: [
+                    SortDescriptor(\.createdAt, order: .reverse)
+                ]
+            )
+            return (try? modelContext.fetch(descriptor)) ?? []
+        }
 }

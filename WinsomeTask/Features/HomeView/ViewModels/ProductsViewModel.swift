@@ -29,10 +29,19 @@ final class ProductsViewModel: ObservableObject {
     private var activeRequestID = UUID()
 
 
-    init(
-        service: ProductServiceProtocol = ProductService(),
-        networkMonitor: NetworkMonitor = .shared
-    ) {
+    init() {
+        self.service = ProductService()
+        self.networkMonitor = .shared
+        observeSearchText()
+    }
+
+    init(service: ProductServiceProtocol) {
+        self.service = service
+        self.networkMonitor = .shared
+        observeSearchText()
+    }
+
+    init(service: ProductServiceProtocol, networkMonitor: NetworkMonitor) {
         self.service = service
         self.networkMonitor = networkMonitor
         observeSearchText()

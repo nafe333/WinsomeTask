@@ -23,18 +23,22 @@ struct TabBarView: View {
                             }
             
             NavigationStack {
-                            FavouritesView()
+                FavouritesView(viewModel: FavouritesViewModel(favoritesManager: favoritesManager))
+
                         }                .tabItem {
                     Label("Favourites", systemImage: "heart.fill")
                 }
             
             OrdersView()
-                            .tabItem { Label("Orders", systemImage: "shippingbox") }
-                            .badge(ordersViewModel.orders.count)
+                .tabItem {
+                    Label("Orders", systemImage: "shippingbox")
+                }
+                .badge(ordersViewModel.orders.count)
             
             
         }
         .environmentObject(favoritesManager)
+        .environmentObject(ordersViewModel)
                 .task {
                     favoritesManager.configure(modelContext: modelContext)
                                 ordersViewModel.configure(orderService: OrderService(modelContext: modelContext))

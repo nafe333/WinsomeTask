@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct OrdersView: View {
-    @StateObject private var viewModel = OrdersViewModel()
+    @EnvironmentObject private var viewModel: OrdersViewModel
     @Environment(\.modelContext) private var modelContext
     var body: some View {
         NavigationStack {
@@ -27,6 +27,11 @@ struct OrdersView: View {
                    .navigationTitle("Orders")
                    .task {
                        viewModel.configure(orderService: OrderService(modelContext: modelContext))
+                   }
+                   .onAppear {
+                       Task {
+                           await viewModel.loadOrders()
+                       }
                    }
                }
     }

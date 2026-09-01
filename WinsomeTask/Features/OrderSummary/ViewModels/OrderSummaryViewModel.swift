@@ -17,6 +17,7 @@ final class OrderSummaryViewModel: ObservableObject {
     private let serviceFeeRate: Double = 0.05
     @Published var showConfirmationAlert = false
     private var orderService: OrderServiceProtocol?
+    @Published private(set) var isSubmitting = false
 
 
     
@@ -46,23 +47,35 @@ final class OrderSummaryViewModel: ObservableObject {
         self.orderService = orderService
     }
     
-    func confirmOrder() {
-            let order = Order(
-                productId: product.id ?? 0,
-                title: product.title ?? "Untitled",
-                category: product.category ?? "General",
-                thumbnail: product.thumbnail ?? "",
-                quantity: quantity,
-                unitPrice: unitPrice,
-                total: total
-            )
+    func confirmOrder(ordersViewModel: OrdersViewModel) {
+        guard !isSubmitting else { return }
 
-            Task {
-                await orderService?.save(order)
+        isSubmitting = true
+
+        let order = Order(
+            productId: product.id ?? 0,
+            title: product.title ?? "Untitled",
+            category: product.category ?? "General",
+            thumbnail: product.thumbnail ?? "",
+            quantity: quantity,
+            unitPrice: unitPrice,
+            total: total
+        )
+
+        Task {
+            do {
+                try await orderService?.save(order)
+
+                ordersViewModel.addOrder(order)
+
+                AudioServicesPlaySystemSound(1005)
+                showConfirmationAlert = true
+            } catch {
+                print("Failed to save order: \(error.localizedDescription)")
             }
 
-            AudioServicesPlaySystemSound(1005)
-            showConfirmationAlert = true
+            isSubmitting = false
         }
+    }
     
 }

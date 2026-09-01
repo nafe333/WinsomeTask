@@ -15,7 +15,6 @@ final class FavoritesManager: ObservableObject {
 
     private var modelContext: ModelContext?
 
-    /// Called once, after the environment's ModelContext becomes available.
     func configure(modelContext: ModelContext) {
         guard self.modelContext == nil else { return }
         self.modelContext = modelContext

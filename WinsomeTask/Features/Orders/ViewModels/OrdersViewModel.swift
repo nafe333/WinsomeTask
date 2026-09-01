@@ -23,4 +23,8 @@ final class OrdersViewModel: ObservableObject {
     func loadOrders() async {
         orders = await orderService?.loadAll() ?? []
     }
+    
+    func addOrder(_ order: Order) {
+        orders.insert(order, at: 0)
+    }
 }
