@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 @Model
-final class Order {
+final class Order: Identifiable {
     @Attribute(.unique) var id: UUID
     var productId: Int
     var title: String

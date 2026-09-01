@@ -11,13 +11,15 @@ import SwiftData
 struct TabBarView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var favoritesManager = FavoritesManager()
+    @StateObject private var ordersViewModel = OrdersViewModel()
+
 
     var body: some View {
         TabView {
             NavigationStack {
                             HomeView()
                         }                            .tabItem {
-                                Label("Shop", systemImage: "house")
+                                Label("Shop", systemImage: "bag")
                             }
             
             NavigationStack {
@@ -26,11 +28,16 @@ struct TabBarView: View {
                     Label("Favourites", systemImage: "heart.fill")
                 }
             
+            OrdersView()
+                            .tabItem { Label("Orders", systemImage: "shippingbox") }
+                            .badge(ordersViewModel.orders.count)
+            
             
         }
         .environmentObject(favoritesManager)
                 .task {
                     favoritesManager.configure(modelContext: modelContext)
+                                ordersViewModel.configure(orderService: OrderService(modelContext: modelContext))
                 }
     }
 }
