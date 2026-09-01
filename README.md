@@ -84,6 +84,16 @@ Press **⌘U**, or run the `WinsomeTaskTests` scheme. All tests are self-contain
 - Minimum-rating filter is applied client-side on top of whatever's already paginated in, since DummyJSON has no rating filter param — so the item count only reflects loaded pages, not the whole catalogue.
 - The product cache stores only the latest fetched page (replaced each refresh), not the full paginated history — kept simple since its only job is offline fallback, not a full offline mirror.
 - Product images are cached as data blobs inside the same SwiftData record as their product, rather than a separate file cache — simpler, and images get cleaned up automatically with their product.
+
+  ## AI Tools & Disclosure
+
+AI tools were used as development assistants during this project:
+
+- **Claude** — used mainly for discussing implementation approaches, reviewing code structure, and troubleshooting issues.
+- **OpenAI Codex** — used occasionally to help investigate and solve specific errors during development.
+
+AI was used as an assistant rather than as a replacement for development. I reviewed, tested, and adapted any suggestions before integrating them into the project, and the final architecture and implementation decisions were made by me.
+
 ## Design
 
 Figma: [TripStore — Travel Accessories App](https://www.figma.com/make/AwrNBEJ1oDsjPWRgU0Aav2/TripStore-Travel-Accessories-App?t=nNRbmAchGwJnkviD-20&fullscreen=1)
