@@ -12,7 +12,8 @@ import SwiftData
 struct WinsomeTaskApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            TabBarView()
+
         }
         .modelContainer(for: CachedProduct.self)
 
