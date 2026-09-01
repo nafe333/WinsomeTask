@@ -84,10 +84,21 @@ Press **⌘U**, or run the `WinsomeTaskTests` scheme. All tests are self-contain
 - Minimum-rating filter is applied client-side on top of whatever's already paginated in, since DummyJSON has no rating filter param — so the item count only reflects loaded pages, not the whole catalogue.
 - The product cache stores only the latest fetched page (replaced each refresh), not the full paginated history — kept simple since its only job is offline fallback, not a full offline mirror.
 - Product images are cached as data blobs inside the same SwiftData record as their product, rather than a separate file cache — simpler, and images get cleaned up automatically with their product.
+## Design
 
-  ## Screenshots <img width="507" height="962" alt="Screenshot 2026-09-02 at 12 32 38 AM" src="https://github.com/user-attachments/assets/f17623ac-e90b-4873-9c2f-34135ef79f4d" />
-<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 32 56 AM" src="https://github.com/user-attachments/assets/66abc3c9-069c-4215-8947-6259b3050866" />
-<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 04 AM" src="https://github.com/user-attachments/assets/23e5b3d3-8fc0-4b4b-8324-b9609847dc51" />
-<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 13 AM" src="https://github.com/user-attachments/assets/bc340eb9-2aca-47ce-9dd8-6644d199a595" />
-<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 21 AM" src="https://github.com/user-attachments/assets/2f838eea-1800-4dca-96ff-2588a4f0d9e4" />
-<img width="507" height="962" alt="Screenshot 2026-09-02 at 12 33 40 AM" src="https://github.com/user-attachments/assets/ddb703fa-1a97-4760-a108-ac369eb272c7" />
+Figma: [TripStore — Travel Accessories App](https://www.figma.com/make/AwrNBEJ1oDsjPWRgU0Aav2/TripStore-Travel-Accessories-App?t=nNRbmAchGwJnkviD-20&fullscreen=1)
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/f17623ac-e90b-4873-9c2f-34135ef79f4d" width="200" /></td>
+    <td><img src="https://github.com/user-attachments/assets/66abc3c9-069c-4215-8947-6259b3050866" width="200" /></td>
+    <td><img src="https://github.com/user-attachments/assets/23e5b3d3-8fc0-4b4b-8324-b9609847dc51" width="200" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/bc340eb9-2aca-47ce-9dd8-6644d199a595" width="200" /></td>
+    <td><img src="https://github.com/user-attachments/assets/2f838eea-1800-4dca-96ff-2588a4f0d9e4" width="200" /></td>
+    <td><img src="https://github.com/user-attachments/assets/ddb703fa-1a97-4760-a108-ac369eb272c7" width="200" /></td>
+  </tr>
+</table>
