@@ -17,7 +17,7 @@ struct TabBarView: View {
             NavigationStack {
                             HomeView()
                         }                            .tabItem {
-                                Label("Home", systemImage: "house")
+                                Label("Shop", systemImage: "house")
                             }
             
             NavigationStack {

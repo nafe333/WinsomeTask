@@ -13,6 +13,7 @@ final class ProductsViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var state: LoadState = .idle
     @Published private(set) var isShowingCachedData = false
+    @Published private(set) var categories: [String] = ["All"]
     @Published var searchText: String = ""
     @Published var selectedCategory: String = "All"
     @Published var sortOption: SortOption = .none
@@ -41,10 +42,6 @@ final class ProductsViewModel: ObservableObject {
     
     var visibleProducts: [Product] {
         minRating > 0 ? products.filter { ($0.rating ?? 0) >= minRating } : products
-    }
-
-    var categories: [String] {
-        ["All"] + Set(products.compactMap(\.category)).sorted()
     }
 
     var hasActiveFilters: Bool {
@@ -102,6 +99,7 @@ final class ProductsViewModel: ObservableObject {
       func loadInitialIfNeeded() async {
           guard state == .idle else { return }
           await refresh()
+          await loadCategoriesIfNeeded()
       }
 
     func refresh() async {
@@ -189,4 +187,19 @@ final class ProductsViewModel: ObservableObject {
     await fetch(isFirstPage: true, isPullToRefresh: true)
 }
 
+    
+    // MARK: - Categories
+    
+    private func loadCategoriesIfNeeded() async {
+        guard categories.count <= 1 else { return }
+        do {
+            let allProductsResponse = try await service.getProducts(params: ProductQueryParams(
+                searchQuery: nil, category: nil, sortBy: nil, order: nil, limit: 100, skip: 0
+            ))
+            let unique = Set((allProductsResponse.products ?? []).compactMap(\.category))
+            categories = ["All"] + unique.sorted()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
 }

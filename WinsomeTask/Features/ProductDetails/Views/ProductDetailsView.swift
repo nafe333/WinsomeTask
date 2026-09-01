@@ -11,6 +11,8 @@ struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailViewModel
     @EnvironmentObject private var favoritesManager: FavoritesManager
     @Environment(\.dismiss) private var dismiss
+    @State private var orderRequest: OrderRequest?
+
     
     init(product: Product) {
         _viewModel = StateObject(wrappedValue: ProductDetailViewModel(product: product))
@@ -18,33 +20,37 @@ struct ProductDetailsView: View {
     private var product: Product { viewModel.product }
 
     var body: some View {
-          ScrollView {
-              VStack(alignment: .leading, spacing: 16) {
-                  heroImage
-                  infoCard
-                  aboutCard
-                  quantityCard
-                  continueButton
-              }
-          }
-          .background(Color(.systemGray6))
-          .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-              ToolbarItem(placement: .principal) {
-                  Text(product.title ?? "Product")
-                      .font(.headline)
-                      .lineLimit(1)
-              }
-              ToolbarItem(placement: .navigationBarTrailing) {
-                  Button {
-                      favoritesManager.toggle(product)
-                  } label: {
-                      Image(systemName: favoritesManager.isFavorite(product.id) ? "heart.fill" : "heart")
-                          .foregroundStyle(favoritesManager.isFavorite(product.id) ? .red : .primary)
-                  }
-              }
-          }
-      }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                heroImage
+                infoCard
+                aboutCard
+                quantityCard
+                continueButton
+            }
+        }
+        .background(Color(.systemGray6))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(product.title ?? "Product")
+                    .font(.headline)
+                    .lineLimit(1)
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    favoritesManager.toggle(product)
+                } label: {
+                    Image(systemName: favoritesManager.isFavorite(product.id) ? "heart.fill" : "heart")
+                        .foregroundStyle(favoritesManager.isFavorite(product.id) ? .red : .primary)
+                }
+            }
+        }
+        
+        .navigationDestination(item: $orderRequest) { request in
+            OrderSummary(product: request.product, quantity: request.quantity)
+        }
+    }
 }
 
 extension ProductDetailsView {
@@ -170,7 +176,8 @@ extension ProductDetailsView {
 
     private var continueButton: some View {
         Button {
-            // Hook up navigation to checkout/order flow here later.
+            orderRequest = OrderRequest(product: product, quantity: viewModel.quantity)
+
         } label: {
             Text(viewModel.isOutOfStock ? "Out of Stock" : "Continue to Order")
                 .font(.headline)
