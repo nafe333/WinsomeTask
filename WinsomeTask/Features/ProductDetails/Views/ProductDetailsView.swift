@@ -55,12 +55,6 @@ struct ProductDetailsView: View {
 }
 
 extension ProductDetailsView {
-//    private var heroImage: some View {
-//           CachedAsyncImage(productId: product.id ?? 0, url: URL(string: product.thumbnail ?? ""))
-//               .aspectRatio(contentMode: .fill)
-//               .frame(height: 260)
-//               .clipped()
-//       }
     
     private var imageGallery: some View {
         Group {
@@ -119,7 +113,10 @@ extension ProductDetailsView {
                 .fontWeight(.bold)
         }
         .padding()
-        .background(.white, in: RoundedRectangle(cornerRadius: 16))
+        .background(
+            Color("BackgroundColor"),
+            in: RoundedRectangle(cornerRadius: 16)
+        )
         .padding(.horizontal)
     }
 
@@ -148,7 +145,10 @@ extension ProductDetailsView {
            }
            .padding()
            .frame(maxWidth: .infinity, alignment: .leading)
-           .background(.white, in: RoundedRectangle(cornerRadius: 16))
+           .background(
+               Color("BackgroundColor"),
+               in: RoundedRectangle(cornerRadius: 16)
+           )
            .padding(.horizontal)
        }
 
@@ -172,7 +172,10 @@ extension ProductDetailsView {
                }
            }
            .padding()
-           .background(.white, in: RoundedRectangle(cornerRadius: 16))
+           .background(
+               Color("BackgroundColor"),
+               in: RoundedRectangle(cornerRadius: 16)
+           )
            .padding(.horizontal)
        }
 

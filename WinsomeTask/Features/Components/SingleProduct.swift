@@ -59,7 +59,7 @@ struct SingleProduct: View {
             .padding()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white)
+        .background(Color("BackgroundColor"))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: .black.opacity(0.1), radius: 8, y: 8)
     }

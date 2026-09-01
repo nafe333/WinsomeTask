@@ -70,7 +70,10 @@ extension OrderSummary {
                Spacer()
            }
            .padding()
-           .background(.white, in: RoundedRectangle(cornerRadius: 16))
+           .background(
+               Color("BackgroundColor"),
+               in: RoundedRectangle(cornerRadius: 16)
+           )
            .padding(.horizontal)
        }
     
@@ -104,7 +107,10 @@ extension OrderSummary {
                }
            }
            .padding()
-           .background(.white, in: RoundedRectangle(cornerRadius: 16))
+           .background(
+               Color("BackgroundColor"),
+               in: RoundedRectangle(cornerRadius: 16)
+           )
            .padding(.horizontal)
        }
 
