@@ -13,6 +13,8 @@ struct HomeView: View {
 
     @State private var showFilterSheet = false
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var favoritesManager: FavoritesManager
+
 
 
     var body: some View {
@@ -114,13 +116,19 @@ extension HomeView {
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                 ForEach(viewModel.visibleProducts) { product in
-                    SingleProduct(
-                        productId: product.id ?? 0, category: product.category ?? "General",
-                        title: product.title ?? "Untitled",
-                        rating: product.rating ?? 0,
-                        price: product.price ?? 0,
-                        imageURL: product.thumbnail ?? ""
-                    )
+                    NavigationLink(value: product) {
+                        SingleProduct(
+                            productId: product.id ?? 0,
+                            category: product.category ?? "General",
+                            title: product.title ?? "Untitled",
+                            rating: product.rating ?? 0,
+                            price: product.price ?? 0,
+                            imageURL: product.thumbnail ?? "",
+                            isFavorited: favoritesManager.isFavorite(product.id),
+                            onToggleFavorite: { favoritesManager.toggle(product) }
+                        )
+                    }
+                    .buttonStyle(.plain)   // prevents the whole card from turning blue/tinted like a system button
                     .onAppear {
                         Task { await viewModel.loadNextPageIfNeeded(currentItem: product) }
                     }
@@ -130,12 +138,12 @@ extension HomeView {
             .animation(.easeInOut(duration: 0.25), value: viewModel.selectedCategory)
 
             if viewModel.isLoadingMore {
-                ProgressView()
-                    .padding(.vertical, 12)
+                ProgressView().padding(.vertical, 12)
             }
         }
-        .refreshable {
-            await viewModel.pullToRefresh() 
+        .refreshable { await viewModel.pullToRefresh() }
+        .navigationDestination(for: Product.self) { product in
+            ProductDetailsView(product: product)
         }
     }
 

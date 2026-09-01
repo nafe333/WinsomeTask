@@ -6,22 +6,32 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TabBarView: View {
+    @Environment(\.modelContext) private var modelContext
+    @StateObject private var favoritesManager = FavoritesManager()
+
     var body: some View {
         TabView {
-            HomeView()
-                            .tabItem {
+            NavigationStack {
+                            HomeView()
+                        }                            .tabItem {
                                 Label("Home", systemImage: "house")
                             }
             
-            FavouritesView()
-                .tabItem {
+            NavigationStack {
+                            FavouritesView()
+                        }                .tabItem {
                     Label("Favourites", systemImage: "heart.fill")
                 }
             
             
         }
+        .environmentObject(favoritesManager)
+                .task {
+                    favoritesManager.configure(modelContext: modelContext)
+                }
     }
 }
 

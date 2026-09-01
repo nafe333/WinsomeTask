@@ -14,8 +14,9 @@ struct SingleProduct: View {
     let rating: Double
     let price: Double
     let imageURL: String
-    @State private var isFavorited: Bool = false
-
+    let isFavorited: Bool
+    let onToggleFavorite: () -> Void
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
@@ -24,14 +25,13 @@ struct SingleProduct: View {
                     .frame(height: 160)
                     .clipped()
 
-                Button {
-                    isFavorited.toggle()
-                } label: {
-                    Image(systemName: isFavorited ? "heart.fill" : "heart")
-                        .foregroundStyle(isFavorited ? .red : .gray)
-                        .padding(8)
-                        .background(.white, in: Circle())
-                        .shadow(color: .black.opacity(0.15), radius: 3, y: 1)
+                Button(action: onToggleFavorite) {
+                                   Image(systemName: isFavorited ? "heart.fill" : "heart")
+                                       .foregroundStyle(isFavorited ? .red : .gray)
+                                       .padding(8)
+                                       .background(.white, in: Circle())
+                                       .shadow(color: .black.opacity(0.15), radius: 3, y: 1)
+                               
                 }
                 .padding(8)
             }
@@ -72,7 +72,7 @@ struct SingleProduct: View {
         title: "Memory Foam Neck Pillow",
         rating: 4.7,
         price: 34.99,
-        imageURL: "placeholder"
+        imageURL: "placeholder", isFavorited: false, onToggleFavorite: {}
     )
     .frame(width: 180)
 }

@@ -15,7 +15,7 @@ struct WinsomeTaskApp: App {
             TabBarView()
 
         }
-        .modelContainer(for: CachedProduct.self)
+        .modelContainer(for: [CachedProduct.self, FavoriteProduct.self])
 
     }
 }
