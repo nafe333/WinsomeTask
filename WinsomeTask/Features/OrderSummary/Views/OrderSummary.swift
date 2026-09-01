@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct OrderSummary: View {
     @StateObject private var viewModel: OrderSummaryViewModel
     @Environment(\.dismiss) private var dismiss
-    
+    @Environment(\.modelContext) private var modelContext
+
     init(product: Product, quantity: Int) {
         _viewModel = StateObject(wrappedValue: OrderSummaryViewModel(product: product, quantity: quantity))
     }
@@ -29,6 +31,16 @@ struct OrderSummary: View {
         .background(Color(.systemGray6))
                 .navigationTitle("Order Summary")
                 .navigationBarTitleDisplayMode(.inline)
+                .task {
+                            viewModel.configure(orderService: OrderService(modelContext: modelContext))
+                        }
+                        .alert("Order Confirmed", isPresented: $viewModel.showConfirmationAlert) {
+                            Button("OK") {
+                                dismiss()
+                            }
+                        } message: {
+                            Text("Your order for \(viewModel.product.title ?? "this item") has been placed.")
+                        }
     }
 }
 extension OrderSummary {
@@ -105,19 +117,20 @@ extension OrderSummary {
            }
        }
 
-       private var confirmButton: some View {
-           Button {
-               // Next step: persist to SwiftData as an Order, then dismiss/navigate to confirmation.
-           } label: {
-               Text("Confirm Order")
-                   .font(.headline)
-                   .foregroundStyle(.white)
-                   .frame(maxWidth: .infinity)
-                   .padding()
-                   .background(Color(red: 0.1, green: 0.15, blue: 0.3), in: RoundedRectangle(cornerRadius: 14))
+           private var confirmButton: some View {
+               Button {
+                   viewModel.confirmOrder()
+               } label: {
+                   Text("Confirm Order")
+                       .font(.headline)
+                       .foregroundStyle(.white)
+                       .frame(maxWidth: .infinity)
+                       .padding()
+                       .background(Color(red: 0.1, green: 0.15, blue: 0.3), in: RoundedRectangle(cornerRadius: 14))
+               }
+               .padding(.horizontal)
            }
-           .padding(.horizontal)
-       }
+       
 
        private var termsNotice: some View {
            Text("By confirming you agree to our Terms of Service. Returns accepted within 30 days of delivery.")

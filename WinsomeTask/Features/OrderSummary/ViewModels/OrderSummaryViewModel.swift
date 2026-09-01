@@ -16,6 +16,8 @@ final class OrderSummaryViewModel: ObservableObject {
     
     private let serviceFeeRate: Double = 0.05
     @Published var showConfirmationAlert = false
+    private var orderService: OrderServiceProtocol?
+
 
     
     var unitPrice: Double {
@@ -33,10 +35,34 @@ final class OrderSummaryViewModel: ObservableObject {
         subtotal + serviceFee
     }
 
+    // MARK: - Behaviour
+    
     init(product: Product, quantity: Int) {
         self.product = product
         self.quantity = quantity
     }
     
+    func configure(orderService: OrderServiceProtocol) {
+        self.orderService = orderService
+    }
+    
+    func confirmOrder() {
+            let order = Order(
+                productId: product.id ?? 0,
+                title: product.title ?? "Untitled",
+                category: product.category ?? "General",
+                thumbnail: product.thumbnail ?? "",
+                quantity: quantity,
+                unitPrice: unitPrice,
+                total: total
+            )
+
+            Task {
+                await orderService?.save(order)
+            }
+
+            AudioServicesPlaySystemSound(1005)
+            showConfirmationAlert = true
+        }
     
 }
