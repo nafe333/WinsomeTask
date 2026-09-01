@@ -6,16 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     @StateObject private var viewModel = ProductsViewModel()
+
     @State private var showFilterSheet = false
+    @Environment(\.modelContext) private var modelContext
+
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("TripStore")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
+            
+            if viewModel.isShowingCachedData {
+                           offlineBanner
+                       }
 
             searchBarSection
             categoryFilterSection
@@ -25,8 +33,9 @@ struct HomeView: View {
         }
         .padding(.horizontal)
         .task {
-            await viewModel.loadInitialIfNeeded()
-        }
+                   viewModel.configureCache(ProductCacheService(modelContext: modelContext))
+                   await viewModel.loadInitialIfNeeded()
+               }
         .sheet(isPresented: $showFilterSheet) {
             FilterSheet(viewModel: viewModel)
         }
@@ -106,7 +115,7 @@ extension HomeView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                 ForEach(viewModel.visibleProducts) { product in
                     SingleProduct(
-                        category: product.category ?? "General",
+                        productId: product.id ?? 0, category: product.category ?? "General",
                         title: product.title ?? "Untitled",
                         rating: product.rating ?? 0,
                         price: product.price ?? 0,
@@ -126,7 +135,7 @@ extension HomeView {
             }
         }
         .refreshable {
-            await viewModel.refresh()
+            await viewModel.pullToRefresh() 
         }
     }
 
@@ -203,6 +212,17 @@ extension HomeView {
             Label("Sort", systemImage: "arrow.up.arrow.down")
         }
     }
+    private var offlineBanner: some View {
+           HStack(spacing: 6) {
+               Image(systemName: "wifi.slash")
+               Text("You're offline — showing saved products")
+           }
+           .font(.caption)
+           .foregroundStyle(.white)
+           .padding(.horizontal, 12)
+           .padding(.vertical, 6)
+           .background(Color.orange, in: Capsule())
+       }
 }
 
 #Preview {

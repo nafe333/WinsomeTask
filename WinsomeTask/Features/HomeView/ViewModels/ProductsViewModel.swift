@@ -12,25 +12,28 @@ import Combine
 final class ProductsViewModel: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var state: LoadState = .idle
+    @Published private(set) var isShowingCachedData = false
     @Published var searchText: String = ""
     @Published var selectedCategory: String = "All"
     @Published var sortOption: SortOption = .none
     @Published var minRating: Double = 0
 
     private let service: ProductServiceProtocol
+    private var cacheService: ProductCacheServiceProtocol?
+    private let networkMonitor: NetworkMonitor
     private var cancellables = Set<AnyCancellable>()
     private var currentSkip = 0
     private let pageSize = 20
     private var canLoadMorePages = true
     private var activeRequestID = UUID()
 
-    
-    convenience init() {
-        self.init(service: ProductService())
-    }
 
-    init(service: ProductServiceProtocol) {
+    init(
+        service: ProductServiceProtocol = ProductService(),
+        networkMonitor: NetworkMonitor = .shared
+    ) {
         self.service = service
+        self.networkMonitor = networkMonitor
         observeSearchText()
     }
     
@@ -56,6 +59,10 @@ final class ProductsViewModel: ObservableObject {
     
     // MARK: - User actions
 
+    func configureCache(_ cacheService: ProductCacheServiceProtocol) {
+        self.cacheService = cacheService
+    }
+    
        func selectCategory(_ category: String) {
            selectedCategory = category
            Task { await refresh() }
@@ -104,7 +111,10 @@ final class ProductsViewModel: ObservableObject {
     }
 
     func loadNextPageIfNeeded(currentItem product: Product) async {
-        guard product.id == products.last?.id, canLoadMorePages, state == .loaded else { return }
+        guard product.id == products.last?.id,
+              canLoadMorePages,
+              state == .loaded,
+              networkMonitor.isConnected else { return }
         await fetch(isFirstPage: false)
     }
 
@@ -113,37 +123,70 @@ final class ProductsViewModel: ObservableObject {
           await refresh()
       }
 
-    private func fetch(isFirstPage: Bool) async {
-           let requestID = UUID()
-           activeRequestID = requestID
-           state = isFirstPage ? .loading : .loadingMore
+    private func fetch(isFirstPage: Bool, isPullToRefresh: Bool = false) async {
+        let requestID = UUID()
+        activeRequestID = requestID
+        if !isPullToRefresh {
+            state = isFirstPage ? .loading : .loadingMore
+        }
+        
+        guard networkMonitor.isConnected else {
+            await loadFromCache(requestID: requestID)
+            return
+        }
+        
+        let params = ProductQueryParams(
+            searchQuery: searchText.isEmpty ? nil : searchText,
+            category: selectedCategory == "All" ? nil : selectedCategory,
+            sortBy: sortOption.apiSortBy,
+            order: sortOption.apiOrder,
+            limit: pageSize,
+            skip: currentSkip
+        )
+        
+        do {
+            let response = try await service.getProducts(params: params)
+            guard requestID == activeRequestID else { return }
+            
+            let newProducts = response.products ?? []
+            products = isFirstPage ? newProducts : products + newProducts
+            currentSkip += newProducts.count
+            canLoadMorePages = products.count < (response.total ?? products.count) && !newProducts.isEmpty
+            isShowingCachedData = false
+            
+            if isFirstPage {
+                await cacheService?.save(newProducts)
+            }
+            state = visibleProducts.isEmpty ? .empty : .loaded
+        } catch {
+            guard requestID == activeRequestID else { return }
+            if isFirstPage && !isPullToRefresh {
+                await loadFromCache(requestID: requestID)
+            } else {
+                state = .loaded
+            }
+        }
+    }
+    
+    private func loadFromCache(requestID: UUID) async {
+           let cached = await cacheService?.loadCached() ?? []  
+           guard requestID == activeRequestID else { return }
 
-           let params = ProductQueryParams(
-               searchQuery: searchText.isEmpty ? nil : searchText,
-               category: selectedCategory == "All" ? nil : selectedCategory,
-               sortBy: sortOption.apiSortBy,
-               order: sortOption.apiOrder,
-               limit: pageSize,
-               skip: currentSkip
-           )
-
-           do {
-               let response = try await service.getProducts(params: params)
-               guard requestID == activeRequestID else { return }
-
-               let newProducts = response.products ?? []
-               products = isFirstPage ? newProducts : products + newProducts
-               currentSkip += newProducts.count
-               canLoadMorePages = products.count < (response.total ?? products.count) && !newProducts.isEmpty
-
-               state = visibleProducts.isEmpty ? .empty : .loaded
-           } catch {
-               guard requestID == activeRequestID else { return }
-               if isFirstPage {
-                   state = .error("Failed to load products. Please try again.")
-               } else {
-                   state = .loaded
-               }
+           if cached.isEmpty {
+               state = .error("No internet connection and no cached products available.")
+           } else {
+               products = cached
+               isShowingCachedData = true
+               state = .loaded
            }
        }
+    
+    
+    // MARK: - Refreshing logic
+    func pullToRefresh() async {
+    currentSkip = 0
+    canLoadMorePages = true
+    await fetch(isFirstPage: true, isPullToRefresh: true)
+}
+
 }

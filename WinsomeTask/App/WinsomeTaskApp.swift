@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct WinsomeTaskApp: App {
@@ -13,5 +14,7 @@ struct WinsomeTaskApp: App {
         WindowGroup {
             HomeView()
         }
+        .modelContainer(for: CachedProduct.self)
+
     }
 }

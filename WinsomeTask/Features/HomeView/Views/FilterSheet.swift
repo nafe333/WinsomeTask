@@ -33,6 +33,3 @@ struct FilterSheet: View {
     }
 }
 
-#Preview {
-    FilterSheet(viewModel: ProductsViewModel())
-}
