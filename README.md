@@ -85,6 +85,30 @@ Press **⌘U**, or run the `WinsomeTaskTests` scheme. All tests are self-contain
 - The product cache stores only the latest fetched page (replaced each refresh), not the full paginated history — kept simple since its only job is offline fallback, not a full offline mirror.
 - Product images are cached as data blobs inside the same SwiftData record as their product, rather than a separate file cache — simpler, and images get cleaned up automatically with their product.
 
+  ## Cache policy
+
+- Last successful catalogue page is cached with SwiftData, and used as a fallback when offline.
+- Cache is fully replaced on each successful fetch — only the first page is cached, not later pages.
+- Product images are cached as data alongside their product, so they're not re-downloaded once loaded.
+- Favourites and orders are stored separately and always available offline.
+- No expiry or size limit yet — cache just gets overwritten on the next successful fetch.
+
+## Known limitations
+
+- No cache expiry or size limit.
+- No offline/retry handling on Favourites or Orders tabs.
+- Minimum-rating filter is client-side only, so item count only reflects loaded pages.
+- Only ViewModel/service unit tests, no UI tests.
+- Service fee (5%) is hardcoded.
+
+## What I'd improve with more time
+
+- Add timeout/cancellation as explicit error cases.
+- Cache all loaded pages, not just the first.
+- Add offline/retry to Favourites and Orders tabs.
+- Real order status transitions instead of always "Delivered."
+
+
   ## AI Tools & Disclosure
 
 AI tools were used as development assistants during this project:
